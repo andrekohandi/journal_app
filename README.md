@@ -1,4 +1,4 @@
-# coba_sqlite
+# journal_app
 
 A new Flutter project.
 

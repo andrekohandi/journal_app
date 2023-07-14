@@ -46,10 +46,12 @@ class _HomePageState extends State<HomePage> {
 
   void deleteItem(int id) async {
     await DatabaseHelper.deleteItem(id);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Record Successfuly Deleted"),
-      backgroundColor: Colors.green,
-    ));
+    if(context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Record Successfuly Deleted"),
+        backgroundColor: Colors.red,
+      ));
+    }
     _refreshData();
   }
 
@@ -68,6 +70,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Journal"),
+          centerTitle: true,
           actions: [
             IconButton(
                 icon: Icon(MyApp.themeNotifier.value == ThemeMode.light
@@ -96,12 +99,16 @@ class _HomePageState extends State<HomePage> {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
                         margin: const EdgeInsets.all(15),
                         color:
                             index % 2 == 0 ? Colors.amber : Colors.amber[300],
                         child: ListTile(
                           title: Text(myData[index]['title']),
                           subtitle: Text(myData[index]['description']),
+                          textColor: Colors.black,
+                          iconColor: Colors.black,
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -112,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                               IconButton(
                                   onPressed: () =>
                                       deleteItem(myData[index]['id']),
-                                  icon: Icon(Icons.delete)),
+                                  icon: const Icon(Icons.delete)),
                             ],
                           ),
                         ),
@@ -180,11 +187,11 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: const Text("Cancel"),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.redAccent,
                               foregroundColor: Colors.white,
                             ),
+                            child: const Text("Cancel"),
                           ),
                           ElevatedButton(
                             onPressed: () async {
@@ -194,7 +201,9 @@ class _HomePageState extends State<HomePage> {
                                 } else {
                                   addItem();
                                 }
-                                Navigator.pop(context);
+                                if(context.mounted) {
+                                  Navigator.pop(context);
+                                }
                               }
                               setState(() {
                                 _titleController.text = "";
